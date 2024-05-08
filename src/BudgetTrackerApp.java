@@ -25,4 +25,15 @@ public class BudgetTrackerApp extends JFrame {
     expenseTable = new JTable(tableModel);
     JScrollPane scrollPane = new JScrollPane(expenseTable);
     add(scrollPane, BorderLayout.CENTER);
+
+    // Add buttons for adding and editing expenses
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JButton addButton = new JButton("Add Expense");
+    JButton editButton = new JButton("Edit Expense");
+    JButton addIncomeButton = new JButton("Add Income");
+    buttonPanel.add(addButton);
+    buttonPanel.add(editButton);
+    buttonPanel.add(addIncomeButton);
+    add(buttonPanel, BorderLayout.SOUTH);
+
 }
