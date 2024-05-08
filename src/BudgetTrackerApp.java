@@ -302,4 +302,34 @@ class AddExpenseDialog extends JDialog {
     }
 }
 
+// Dialog for editing an expense
+class EditExpenseDialog extends AddExpenseDialog {
+    private Expense expense;
+
+    // Constructor
+    public EditExpenseDialog(Frame parent, Expense expense) {
+        super(parent);
+        this.expense = expense;
+        setTitle("Edit Expense");
+        populateFields();
+    }
+
+    private void populateFields() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateField.setText(dateFormat.format(expense.getDate()));
+        descriptionField.setText(expense.getDescription());
+        amountField.setText(String.valueOf(-expense.getAmount())); // Negative amount for expense
+    }
+
+    @Override
+    public Expense getExpense() {
+        Expense updatedExpense = super.getExpense();
+        if (updatedExpense != null) {
+            updatedExpense.setDate(expense.getDate()); // Keep the original date
+        }
+        return updatedExpense;
+    }
+}
+
+
 }
