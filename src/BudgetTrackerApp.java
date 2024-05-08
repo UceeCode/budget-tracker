@@ -140,4 +140,70 @@ private void addIncomeToTable(Expense income) {
     }
 }
 
+// Method to update an expense in the table
+private void updateExpenseInTable(int rowIndex, Expense expense) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    Object[] rowData = {dateFormat.format(expense.getDate()), expense.getDescription(), expense.getAmount()};
+    for (int i = 0; i < rowData.length; i++) {
+        tableModel.setValueAt(rowData[i], rowIndex, i);
+    }
+}
+
+// Method to load expenses from file
+private void loadExpenses() {
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("expenses.dat"))) {
+        List<Expense> loadedExpenses = (List<Expense>) ois.readObject();
+        for (Expense expense : loadedExpenses) {
+            expenses.add(expense);
+            if (expense.getAmount() >= 0) {
+                addIncomeToTable(expense);
+            } else {
+                addExpenseToTable(expense);
+            }
+        }
+        updateBudgetSummary();
+    } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+    }
+}
+
+// Method to save expenses to file
+private void saveExpenses() {
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("expenses.dat"))) {
+        oos.writeObject(expenses);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+// Method to update the budget summary labels
+private void updateBudgetSummary() {
+    double totalIncome = 0;
+    double totalExpense = 0;
+    for (Expense expense : expenses) {
+        if (expense.getAmount() >= 0) {
+            totalIncome += expense.getAmount();
+        } else {
+            totalExpense += expense.getAmount();
+        }
+    }
+    totalIncomeLabel.setText(String.valueOf(totalIncome));
+    totalExpenseLabel.setText(String.valueOf(totalExpense));
+
+    // Calculate remaining money
+    double remaining = totalIncome + totalExpense;
+    totalRemainingLabel.setText(String.valueOf(remaining));
+}
+
+// Main method
+public static void main(String[] args) {
+    SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+            new BudgetTrackerApp().setVisible(true);
+        }
+    });
+}
+}
+
 }
