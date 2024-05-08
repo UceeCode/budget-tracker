@@ -10,201 +10,209 @@ import java.util.Date;
 import java.util.List;
 
 public class BudgetTrackerApp extends JFrame {
-    expenses = new ArrayList<>();
+    private List<Expense> expenses;
+    private DefaultTableModel tableModel;
+    private JTable expenseTable;
+    private JLabel totalIncomeLabel;
+    private JLabel totalExpenseLabel;
+    private JLabel totalRemainingLabel;
 
-    // Set up the UI
-    setTitle("Household Budget Tracker");
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(600, 400);
-    setLayout(new BorderLayout());
+    public BudgetTrackerApp() {
+        expenses = new ArrayList<>();
 
+        // Set up the UI
+        setTitle("Household Budget Tracker");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600, 400);
+        setLayout(new BorderLayout());
 
-    // Create the table for displaying expenses
-    String[] columns = {"Date", "Description", "Amount"};
-    tableModel = new DefaultTableModel(columns, 0);
-    expenseTable = new JTable(tableModel);
-    JScrollPane scrollPane = new JScrollPane(expenseTable);
-    add(scrollPane, BorderLayout.CENTER);
+        // Create the table for displaying expenses
+        String[] columns = {"Date", "Description", "Amount"};
+        tableModel = new DefaultTableModel(columns, 0);
+        expenseTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(expenseTable);
+        add(scrollPane, BorderLayout.CENTER);
 
-    // Add buttons for adding and editing expenses
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JButton addButton = new JButton("Add Expense");
-    JButton editButton = new JButton("Edit Expense");
-    JButton addIncomeButton = new JButton("Add Income");
-    buttonPanel.add(addButton);
-    buttonPanel.add(editButton);
-    buttonPanel.add(addIncomeButton);
-    add(buttonPanel, BorderLayout.SOUTH);
+        // Add buttons for adding and editing expenses
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton addButton = new JButton("Add Expense");
+        JButton editButton = new JButton("Edit Expense");
+        JButton addIncomeButton = new JButton("Add Income");
+        buttonPanel.add(addButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(addIncomeButton);
+        add(buttonPanel, BorderLayout.SOUTH);
 
-    // Add labels for displaying total income, total expense, and remaining money
-    JPanel totalPanel = new JPanel(new GridLayout(3, 2));
-    totalPanel.setBorder(BorderFactory.createTitledBorder("Budget Summary"));
-    totalPanel.setPreferredSize(new Dimension(200, 120));
-    totalPanel.add(new JLabel("Total Income: "));
-    totalIncomeLabel = new JLabel("0.0");
-    totalPanel.add(totalIncomeLabel);
-    totalPanel.add(new JLabel("Total Expense: "));
-    totalExpenseLabel = new JLabel("0.0");
-    totalPanel.add(totalExpenseLabel);
-    totalPanel.add(new JLabel("Remaining: "));
-    totalRemainingLabel = new JLabel("0.0");
-    totalPanel.add(totalRemainingLabel);
-    add(totalPanel, BorderLayout.NORTH);
+        // Add labels for displaying total income, total expense, and remaining money
+        JPanel totalPanel = new JPanel(new GridLayout(3, 2));
+        totalPanel.setBorder(BorderFactory.createTitledBorder("Budget Summary"));
+        totalPanel.setPreferredSize(new Dimension(200, 120));
+        totalPanel.add(new JLabel("Total Income: "));
+        totalIncomeLabel = new JLabel("0.0");
+        totalPanel.add(totalIncomeLabel);
+        totalPanel.add(new JLabel("Total Expense: "));
+        totalExpenseLabel = new JLabel("0.0");
+        totalPanel.add(totalExpenseLabel);
+        totalPanel.add(new JLabel("Remaining: "));
+        totalRemainingLabel = new JLabel("0.0");
+        totalPanel.add(totalRemainingLabel);
+        add(totalPanel, BorderLayout.NORTH);
 
-    // Load saved expenses from file
-    loadExpenses();
+        // Load saved expenses from file
+        loadExpenses();
 
-    // Add action listeners for buttons
+        // Add action listeners for buttons
         addButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            showAddExpenseDialog();
-        }
-    });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAddExpenseDialog();
+            }
+        });
 
         editButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int selectedRow = expenseTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                showEditExpenseDialog(selectedRow);
-            } else {
-                JOptionPane.showMessageDialog(BudgetTrackerApp.this, "Please select an expense to edit.");
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = expenseTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    showEditExpenseDialog(selectedRow);
+                } else {
+                    JOptionPane.showMessageDialog(BudgetTrackerApp.this, "Please select an expense to edit.");
+                }
             }
-        }
-    });
+        });
 
         addIncomeButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            showAddIncomeDialog();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAddIncomeDialog();
+            }
+        });
+    }
+
+    // Method to display the "Add Expense" dialog
+    private void showAddExpenseDialog() {
+        AddExpenseDialog dialog = new AddExpenseDialog(this);
+        dialog.setVisible(true);
+        if (dialog.isConfirmed()) {
+            Expense expense = dialog.getExpense();
+            expenses.add(expense);
+            addExpenseToTable(expense);
+            updateBudgetSummary();
+            saveExpenses();
         }
-    });
-}
-
-// Method to display the "Add Expense" dialog
-private void showAddExpenseDialog() {
-    AddExpenseDialog dialog = new AddExpenseDialog(this);
-    dialog.setVisible(true);
-    if (dialog.isConfirmed()) {
-        Expense expense = dialog.getExpense();
-        expenses.add(expense);
-        addExpenseToTable(expense);
-        updateBudgetSummary();
-        saveExpenses();
     }
-}
 
-// Method to display the "Edit Expense" dialog
-private void showEditExpenseDialog(int rowIndex) {
-    Expense expense = expenses.get(rowIndex);
-    EditExpenseDialog dialog = new EditExpenseDialog(this, expense);
-    dialog.setVisible(true);
-    if (dialog.isConfirmed()) {
-        Expense updatedExpense = dialog.getExpense();
-        expenses.set(rowIndex, updatedExpense);
-        updateExpenseInTable(rowIndex, updatedExpense);
-        updateBudgetSummary();
-        saveExpenses();
+    // Method to display the "Edit Expense" dialog
+    private void showEditExpenseDialog(int rowIndex) {
+        Expense expense = expenses.get(rowIndex);
+        EditExpenseDialog dialog = new EditExpenseDialog(this, expense);
+        dialog.setVisible(true);
+        if (dialog.isConfirmed()) {
+            Expense updatedExpense = dialog.getExpense();
+            expenses.set(rowIndex, updatedExpense);
+            updateExpenseInTable(rowIndex, updatedExpense);
+            updateBudgetSummary();
+            saveExpenses();
+        }
     }
-}
 
-// Method to display the "Add Income" dialog
-private void showAddIncomeDialog() {
-    AddIncomeDialog dialog = new AddIncomeDialog(this);
-    dialog.setVisible(true);
-    if (dialog.isConfirmed()) {
-        Expense income = dialog.getExpense();
-        expenses.add(income);
-        addIncomeToTable(income);
-        updateBudgetSummary();
-        saveExpenses();
+    // Method to display the "Add Income" dialog
+    private void showAddIncomeDialog() {
+        AddIncomeDialog dialog = new AddIncomeDialog(this);
+        dialog.setVisible(true);
+        if (dialog.isConfirmed()) {
+            Expense income = dialog.getExpense();
+            expenses.add(income);
+            addIncomeToTable(income);
+            updateBudgetSummary();
+            saveExpenses();
+        }
     }
-}
 
-// Method to add an expense to the table
-private void addExpenseToTable(Expense expense) {
-    if (expense != null) {
+    // Method to add an expense to the table
+    private void addExpenseToTable(Expense expense) {
+        if (expense != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Object[] rowData = {dateFormat.format(expense.getDate()), expense.getDescription(), expense.getAmount()};
+            tableModel.addRow(rowData);
+        }
+    }
+
+    // Method to add income to the table
+    private void addIncomeToTable(Expense income) {
+        if (income != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Object[] rowData = {dateFormat.format(income.getDate()), income.getDescription(), income.getAmount()};
+            tableModel.addRow(rowData);
+        }
+    }
+
+    // Method to update an expense in the table
+    private void updateExpenseInTable(int rowIndex, Expense expense) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Object[] rowData = {dateFormat.format(expense.getDate()), expense.getDescription(), expense.getAmount()};
-        tableModel.addRow(rowData);
+        for (int i = 0; i < rowData.length; i++) {
+            tableModel.setValueAt(rowData[i], rowIndex, i);
+        }
     }
-}
 
-// Method to add income to the table
-private void addIncomeToTable(Expense income) {
-    if (income != null) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Object[] rowData = {dateFormat.format(income.getDate()), income.getDescription(), income.getAmount()};
-        tableModel.addRow(rowData);
+    // Method to load expenses from file
+    private void loadExpenses() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("expenses.dat"))) {
+            List<Expense> loadedExpenses = (List<Expense>) ois.readObject();
+            for (Expense expense : loadedExpenses) {
+                expenses.add(expense);
+                if (expense.getAmount() >= 0) {
+                    addIncomeToTable(expense);
+                } else {
+                    addExpenseToTable(expense);
+                }
+            }
+            updateBudgetSummary();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
-}
 
-// Method to update an expense in the table
-private void updateExpenseInTable(int rowIndex, Expense expense) {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    Object[] rowData = {dateFormat.format(expense.getDate()), expense.getDescription(), expense.getAmount()};
-    for (int i = 0; i < rowData.length; i++) {
-        tableModel.setValueAt(rowData[i], rowIndex, i);
+    // Method to save expenses to file
+    private void saveExpenses() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("expenses.dat"))) {
+            oos.writeObject(expenses);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-}
 
-// Method to load expenses from file
-private void loadExpenses() {
-    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("expenses.dat"))) {
-        List<Expense> loadedExpenses = (List<Expense>) ois.readObject();
-        for (Expense expense : loadedExpenses) {
-            expenses.add(expense);
+    // Method to update the budget summary labels
+    private void updateBudgetSummary() {
+        double totalIncome = 0;
+        double totalExpense = 0;
+        for (Expense expense : expenses) {
             if (expense.getAmount() >= 0) {
-                addIncomeToTable(expense);
+                totalIncome += expense.getAmount();
             } else {
-                addExpenseToTable(expense);
+                totalExpense += expense.getAmount();
             }
         }
-        updateBudgetSummary();
-    } catch (IOException | ClassNotFoundException e) {
-        e.printStackTrace();
+        totalIncomeLabel.setText(String.valueOf(totalIncome));
+        totalExpenseLabel.setText(String.valueOf(totalExpense));
+
+        // Calculate remaining money
+        double remaining = totalIncome + totalExpense;
+        totalRemainingLabel.setText(String.valueOf(remaining));
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new BudgetTrackerApp().setVisible(true);
+            }
+        });
     }
 }
 
-// Method to save expenses to file
-private void saveExpenses() {
-    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("expenses.dat"))) {
-        oos.writeObject(expenses);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
-// Method to update the budget summary labels
-private void updateBudgetSummary() {
-    double totalIncome = 0;
-    double totalExpense = 0;
-    for (Expense expense : expenses) {
-        if (expense.getAmount() >= 0) {
-            totalIncome += expense.getAmount();
-        } else {
-            totalExpense += expense.getAmount();
-        }
-    }
-    totalIncomeLabel.setText(String.valueOf(totalIncome));
-    totalExpenseLabel.setText(String.valueOf(totalExpense));
-
-    // Calculate remaining money
-    double remaining = totalIncome + totalExpense;
-    totalRemainingLabel.setText(String.valueOf(remaining));
-}
-
-// Main method
-public static void main(String[] args) {
-    SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-            new BudgetTrackerApp().setVisible(true);
-        }
-    });
-}
-}
 
 // Expense class representing an expense or income
 class Expense implements Serializable {
@@ -244,7 +252,6 @@ class Expense implements Serializable {
         this.amount = amount;
     }
 }
-
 
 // Dialog for adding an expense
 class AddExpenseDialog extends JDialog {
@@ -384,6 +391,4 @@ class AddIncomeDialog extends JDialog {
             return null;
         }
     }
-}
-
 }
