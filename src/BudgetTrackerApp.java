@@ -95,5 +95,18 @@ private void showAddExpenseDialog() {
     }
 }
 
+// Method to display the "Edit Expense" dialog
+private void showEditExpenseDialog(int rowIndex) {
+    Expense expense = expenses.get(rowIndex);
+    EditExpenseDialog dialog = new EditExpenseDialog(this, expense);
+    dialog.setVisible(true);
+    if (dialog.isConfirmed()) {
+        Expense updatedExpense = dialog.getExpense();
+        expenses.set(rowIndex, updatedExpense);
+        updateExpenseInTable(rowIndex, updatedExpense);
+        updateBudgetSummary();
+        saveExpenses();
+    }
+}
 
 }
