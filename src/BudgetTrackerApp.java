@@ -36,4 +36,22 @@ public class BudgetTrackerApp extends JFrame {
     buttonPanel.add(addIncomeButton);
     add(buttonPanel, BorderLayout.SOUTH);
 
+    // Add labels for displaying total income, total expense, and remaining money
+    JPanel totalPanel = new JPanel(new GridLayout(3, 2));
+    totalPanel.setBorder(BorderFactory.createTitledBorder("Budget Summary"));
+    totalPanel.setPreferredSize(new Dimension(200, 120));
+    totalPanel.add(new JLabel("Total Income: "));
+    totalIncomeLabel = new JLabel("0.0");
+    totalPanel.add(totalIncomeLabel);
+    totalPanel.add(new JLabel("Total Expense: "));
+    totalExpenseLabel = new JLabel("0.0");
+    totalPanel.add(totalExpenseLabel);
+    totalPanel.add(new JLabel("Remaining: "));
+    totalRemainingLabel = new JLabel("0.0");
+    totalPanel.add(totalRemainingLabel);
+    add(totalPanel, BorderLayout.NORTH);
+
+    // Load saved expenses from file
+    loadExpenses();
+
 }
