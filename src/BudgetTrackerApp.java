@@ -10,5 +10,11 @@ import java.util.Date;
 import java.util.List;
 
 public class BudgetTrackerApp extends JFrame {
+    expenses = new ArrayList<>();
 
+    // Set up the UI
+    setTitle("Household Budget Tracker");
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setSize(600, 400);
+    setLayout(new BorderLayout());
 }
