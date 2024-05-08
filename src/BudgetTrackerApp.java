@@ -54,4 +54,34 @@ public class BudgetTrackerApp extends JFrame {
     // Load saved expenses from file
     loadExpenses();
 
+    // Add action listeners for buttons
+        addButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showAddExpenseDialog();
+        }
+    });
+
+        editButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int selectedRow = expenseTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                showEditExpenseDialog(selectedRow);
+            } else {
+                JOptionPane.showMessageDialog(BudgetTrackerApp.this, "Please select an expense to edit.");
+            }
+        }
+    });
+
+        addIncomeButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showAddIncomeDialog();
+        }
+    });
+}
+
+
+
 }
