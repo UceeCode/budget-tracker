@@ -331,5 +331,59 @@ class EditExpenseDialog extends AddExpenseDialog {
     }
 }
 
+// Dialog for adding income
+class AddIncomeDialog extends JDialog {
+    protected JTextField dateField;
+    protected JTextField descriptionField;
+    protected JTextField amountField;
+    public boolean confirmed = false;
+
+    // Constructor
+    public AddIncomeDialog(Frame parent) {
+        super(parent, "Add Income", true);
+        setSize(300, 200);
+        setLayout(new GridLayout(4, 2));
+
+        // Add components to the dialog
+        add(new JLabel("Date (yyyy-MM-dd):"));
+        dateField = new JTextField();
+        add(dateField);
+
+        add(new JLabel("Description:"));
+        descriptionField = new JTextField();
+        add(descriptionField);
+
+        add(new JLabel("Income Amount: "));
+        amountField = new JTextField();
+        add(amountField);
+
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                confirmed = true;
+                dispose();
+            }
+        });
+        add(addButton);
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public Expense getExpense() {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = dateFormat.parse(dateField.getText());
+            String description = descriptionField.getText();
+            double amount = Double.parseDouble(amountField.getText());
+            return new Expense(date, description, amount); // Positive amount for income
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
 
 }
