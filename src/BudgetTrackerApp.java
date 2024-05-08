@@ -82,6 +82,18 @@ public class BudgetTrackerApp extends JFrame {
     });
 }
 
+// Method to display the "Add Expense" dialog
+private void showAddExpenseDialog() {
+    AddExpenseDialog dialog = new AddExpenseDialog(this);
+    dialog.setVisible(true);
+    if (dialog.isConfirmed()) {
+        Expense expense = dialog.getExpense();
+        expenses.add(expense);
+        addExpenseToTable(expense);
+        updateBudgetSummary();
+        saveExpenses();
+    }
+}
 
 
 }
