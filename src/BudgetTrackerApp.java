@@ -17,4 +17,12 @@ public class BudgetTrackerApp extends JFrame {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(600, 400);
     setLayout(new BorderLayout());
+
+
+    // Create the table for displaying expenses
+    String[] columns = {"Date", "Description", "Amount"};
+    tableModel = new DefaultTableModel(columns, 0);
+    expenseTable = new JTable(tableModel);
+    JScrollPane scrollPane = new JScrollPane(expenseTable);
+    add(scrollPane, BorderLayout.CENTER);
 }
