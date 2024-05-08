@@ -109,4 +109,17 @@ private void showEditExpenseDialog(int rowIndex) {
     }
 }
 
+// Method to display the "Add Income" dialog
+private void showAddIncomeDialog() {
+    AddIncomeDialog dialog = new AddIncomeDialog(this);
+    dialog.setVisible(true);
+    if (dialog.isConfirmed()) {
+        Expense income = dialog.getExpense();
+        expenses.add(income);
+        addIncomeToTable(income);
+        updateBudgetSummary();
+        saveExpenses();
+    }
+}
+
 }
