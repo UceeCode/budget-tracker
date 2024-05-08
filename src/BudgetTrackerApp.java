@@ -131,6 +131,13 @@ private void addExpenseToTable(Expense expense) {
     }
 }
 
-
+// Method to add income to the table
+private void addIncomeToTable(Expense income) {
+    if (income != null) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Object[] rowData = {dateFormat.format(income.getDate()), income.getDescription(), income.getAmount()};
+        tableModel.addRow(rowData);
+    }
+}
 
 }
