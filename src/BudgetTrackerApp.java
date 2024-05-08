@@ -206,4 +206,43 @@ public static void main(String[] args) {
 }
 }
 
+// Expense class representing an expense or income
+class Expense implements Serializable {
+    private Date date;
+    private String description;
+    private double amount;
+
+    // Constructor
+    public Expense(Date date, String description, double amount) {
+        this.date = date;
+        this.description = description;
+        this.amount = amount;
+    }
+
+    // Getters and setters
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+}
+
 }
