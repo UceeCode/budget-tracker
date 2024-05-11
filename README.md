@@ -1,4 +1,3 @@
-Household Budget Tracker
 Household Budget Tracker is a simple Java application for managing your household expenses and income. It allows you to add, edit, and view expenses and income, as well as track your total income, total expenses, and remaining balance.
 
 Features
